@@ -58,6 +58,13 @@ A WebGL canvas cannot be that large, so an invisible second map draws the area i
 chunks of about 2048 px, and the Python side pastes them into one image
 (`frontend/src/map/export.ts`, `mapstill/stitch.py`).
 
+Which names a map draws depends on what is around them, so two chunks would now and
+then decide differently about a name on their seam, and it would be cut off there.
+A map with labels is therefore drawn with a margin around each chunk (256 px of the
+map, where the canvas has room for it), which is cut off again. The image is then
+the same wherever the seams are: exports of the same map with two chunk sizes come
+out identical, pixel for pixel.
+
 ## Styles
 
 The style is either a base map or a custom style.
@@ -98,8 +105,9 @@ save dialog (`--browser`), images go to `Pictures/MapStill`. Images are named
 
 ## Known limits
 
-- A label that lies across the border of two chunks is drawn by both; in the cases
-  tried it came out whole, but it has not been tested systematically.
+- A map with labels that is enlarged more than about 11 times has no room for a
+  margin as wide as a name, and a name may be cut where two chunks meet. The app
+  warns then; a higher detail level avoids it.
 - The map data ends at zoom 15 (Google's numbering): above it, things get larger but
   nothing new appears.
 - While the window is minimised, an export pauses (a web view draws nothing then).
