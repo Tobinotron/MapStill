@@ -1,0 +1,774 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f6f5f3;
+  --panel: #ffffff;
+  --line: #dedbd5;
+  --text: #1f1d1a;
+  --muted: #6b665e;
+  --field: #ffffff;
+  --accent: #a3154f;
+  --accent-text: #ffffff;
+  --error: #b3261e;
+  --warning: #8a5a00;
+  --radius: 6px;
+  font: 13px/1.45 system-ui, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17151a;
+    --panel: #201d24;
+    --line: #37323d;
+    --text: #ece9ef;
+    --muted: #a39db0;
+    --field: #17151a;
+    --accent: #e0558f;
+    --accent-text: #17151a;
+    --error: #ff8a80;
+    --warning: #f0b95a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--muted);
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  height: 100%;
+}
+
+.stage {
+  position: relative;
+  min-width: 0;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+}
+
+/* --- sidebar --- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+
+.sections {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section.closed {
+  padding-bottom: 12px;
+}
+
+.section h2,
+.subhead {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* a part of a section with a heading of its own */
+.subhead {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+/* the title of a section: a click folds it away */
+.section-head {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  margin: -4px 0;
+  padding: 4px 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.section-head:hover {
+  color: var(--text);
+}
+
+.section-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.section-head svg {
+  flex: none;
+  margin-left: -2px;
+}
+
+/* what a folded section holds */
+.section-summary {
+  margin-left: auto;
+  padding-left: 12px;
+  overflow: hidden;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.section p {
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hint,
+.summary {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.summary {
+  font-variant-numeric: tabular-nums;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 8px;
+  font: inherit;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.input:focus-visible,
+.button:focus-visible,
+.chip:focus-visible,
+.places button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.input.code {
+  font: 11px/1.4 ui-monospace, Consolas, monospace;
+  resize: vertical;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 2px 0;
+  accent-color: var(--accent);
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.row > .button:not(.icon),
+.row > .input {
+  flex: 1;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 8px;
+}
+
+.check {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+}
+
+.check input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.swatch {
+  width: 34px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.swatch:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.button.icon {
+  padding: 6px 7px;
+}
+
+.button.primary {
+  width: 100%;
+  padding: 9px 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.size {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 6px;
+  align-items: end;
+}
+
+.size .times,
+.size .unit {
+  padding-bottom: 6px;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  padding: 2px 10px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.issue {
+  font-size: 12px;
+  padding-left: 8px;
+  border-left: 2px solid var(--muted);
+  color: var(--muted);
+}
+
+.issue.error {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.issue.warning {
+  color: var(--warning);
+  border-color: var(--warning);
+}
+
+.places {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.places button {
+  width: 100%;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  color: var(--text);
+  background: var(--field);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.places li:last-child button {
+  border-bottom: 0;
+}
+
+.places button:hover {
+  background: var(--bg);
+}
+
+/* --- export --- */
+
+.export {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.export p {
+  margin: 0;
+}
+
+.progress-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.progress {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.progress progress {
+  width: 100%;
+  height: 8px;
+  accent-color: var(--accent);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  font-size: 12px;
+}
+
+.path {
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+/* --- on the map --- */
+
+.frame-handle {
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border: 2px solid #1f1d1a;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+  cursor: nwse-resize;
+}
+
+.frame-handle.frame-nesw {
+  cursor: nesw-resize;
+}
+
+.frame-handle.frame-mover {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: move;
+}
+
+/* The invisible map that draws the exported image. It must not be `display: none`:
+   it needs a size to draw. */
+.export-stage {
+  position: fixed;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --- style: base maps or custom --- */
+
+.segments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 2px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.segment {
+  padding: 4px 8px;
+  font: inherit;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.segment.on {
+  color: var(--text);
+  background: var(--panel);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.segment:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.style-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row > .button.fit {
+  flex: none;
+}
+
+.row > .grow {
+  flex: 1;
+}
+
+/* --- the style editor --- */
+
+.app:has(.editor) {
+  grid-template-columns: 400px 1fr;
+}
+
+.editor-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.editor-head h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding: 8px;
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.confirm p {
+  flex: 1 0 100%;
+  margin: 0;
+}
+
+.button.danger {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.button.primary.inline {
+  width: auto;
+  padding: 5px 12px;
+  flex: none;
+}
+
+.import {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.features > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.feature {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  padding: 5px 8px 5px 6px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: var(--field);
+  border: 0;
+  cursor: pointer;
+}
+
+.feature:hover,
+.feature.open {
+  background: var(--bg);
+}
+
+.feature:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.feature svg {
+  flex: none;
+  color: var(--muted);
+}
+
+.feature-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-left: 2px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.chips-color {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+.chip-color {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+/* the features below have different colours */
+.varies {
+  background: repeating-linear-gradient(135deg, var(--line) 0 3px, var(--field) 3px 6px);
+}
+
+.chip-color.off {
+  opacity: 0.25;
+}
+
+.feature-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px 10px 26px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+
+.prop-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prop {
+  display: grid;
+  grid-template-columns: 92px 28px 1fr 26px 26px;
+  gap: 6px;
+  align-items: center;
+}
+
+.prop-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.prop-label.wide {
+  grid-column: span 3;
+}
+
+.prop.hidden .color-chip,
+.prop.hidden .hex {
+  opacity: 0.4;
+}
+
+.color-chip {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.color-chip:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* the browser's own colour field, invisible on top of the chip: it opens the picker */
+.color-chip input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.input.hex {
+  padding: 4px 6px;
+  font: 12px/1.4 ui-monospace, Consolas, monospace;
+}
+
+.input.hex::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.button.small {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
+
+.button.small.off {
+  color: var(--muted);
+}
+
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.palette-row {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 6px;
+  align-items: start;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.swatch-button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.swatch-button:hover {
+  transform: scale(1.15);
+}
+
+.swatch-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
