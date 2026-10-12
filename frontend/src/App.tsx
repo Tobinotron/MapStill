@@ -1,7 +1,7 @@
 import type { StyleSpecification } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as api from "./api";
-import { ExportCancelled, exportIssues, planExport, renderExport } from "./map/export";
+import { ExportCancelled, chunking, drawsLabels, exportIssues, planExport, renderExport } from "./map/export";
 import { atLeast, cover, inside, isBounds, parseAspect } from "./map/geo";
 import MapPreview, { type MapHandle } from "./map/MapPreview";
 import { buildStyle, docOf, readNamedStyles, styleIssues } from "./map/styles";
@@ -75,7 +75,7 @@ export default function App() {
 
   if (!settings || !plan) return <div className="loading">Loading…</div>;
 
-  const issues = [...styleIssues(settings), ...exportIssues(plan, settings.detailZoom, settings.format)];
+  const issues = [...styleIssues(settings), ...exportIssues(plan, settings.detailZoom, settings.format, style !== null && drawsLabels(style))];
   const ratio = parseAspect(settings.aspect);
   const update = (patch: Partial<Settings>) => setSettings((old) => (old ? { ...old, ...patch } : old));
 
@@ -132,7 +132,8 @@ export default function App() {
     if (path === null) return; // the dialog was cancelled
     const controller = new AbortController();
     cancel.current = controller;
-    setExportState({ status: "rendering", done: 0, total: plan.cols * plan.rows });
+    const chunks = chunking(plan, drawsLabels(style));
+    setExportState({ status: "rendering", done: 0, total: chunks.cols * chunks.rows });
     let id: string | null = null;
     try {
       const started = await api.startExport({ width: plan.width, height: plan.height, format: settings.format, path: path ?? null, name });
@@ -141,6 +142,7 @@ export default function App() {
         style,
         bounds: settings.bounds,
         plan,
+        chunks,
         onChunk: (png, x, y) => api.putChunk(started.id, x, y, png),
         onProgress: (done, total) => setExportState({ status: "rendering", done, total }),
         signal: controller.signal,
