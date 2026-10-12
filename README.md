@@ -4,9 +4,18 @@ Renders a styled map of any area as one large image, for use in media projects:
 pick a place, a style and a size, and export a PNG or JPEG. No screenshots, no
 stitching.
 
+![The MapStill window: Tokyo in the Mono dark style, with the frame of the area that is exported](docs/screenshots/screenshot-main.png)
+
+Two exported images, as they come out of the app:
+
+| The Dolomites as a hiking map | London in Mono light with terrain shading |
+| --- | --- |
+| ![The Dolomites as a hiking map, with contour lines, peaks and their heights](docs/screenshots/dolos-1920x1080.jpg) | ![London in shades of grey, with the relief of the land shaded](docs/screenshots/london-1920x1080.jpg) |
+
+**Windows only** (10 or 11). It is made for Windows and has been run nowhere else.
+
 Stack: Python 3.12 (FastAPI, Pillow, PyWebView) as the desktop shell, React + Vite +
-MapLibre GL JS for everything that draws. The same layout as the sister project
-MediaArchiver.
+MapLibre GL JS for everything that draws.
 
 ## Running it
 
@@ -18,8 +27,9 @@ cd ..
 uv run python main.py
 ```
 
-Needs WebView2 (part of Windows 11) and an internet connection: the map is loaded
-while the program runs.
+Needs Windows with WebView2 (part of Windows 11, and of an up-to-date Windows 10),
+[uv](https://docs.astral.sh/uv/), Node.js, and an internet connection: the map is
+loaded while the program runs.
 
 | Command | What it does |
 | --- | --- |
@@ -69,6 +79,8 @@ out identical, pixel for pixel.
 
 The style is either a base map or a custom style.
 
+![The style editor with the Blueprint preset, on a map of Vienna](docs/screenshots/screenshot-styles.png)
+
 - **Base maps**: OpenFreeMap's own styles (Liberty, Bright, Positron, Dark, Fiord),
   used as they are.
 - **Custom**: opens the style editor. A custom style is a set of colours for the
@@ -114,6 +126,22 @@ save dialog (`--browser`), images go to `Pictures/MapStill`. Images are named
 - The image is held in memory while it is assembled: 3 GB at the limit of 1,000
   megapixels.
 
+## Services it uses
+
+The app has no server of its own. It asks three public, free services, each from the
+computer it runs on:
+
+- [OpenFreeMap](https://openfreemap.org/) for the map tiles;
+- [Mapterhorn](https://mapterhorn.com/) for the elevation data, if terrain is shown;
+- [Nominatim](https://nominatim.openstreetmap.org/) for the place search.
+
+They are run by volunteers and donations: use them with care, and consider
+supporting them if the app is of use to you. The place search keeps to Nominatim's
+[usage policy](https://operations.osmfoundation.org/policies/nominatim/): it only
+asks when a search is submitted, at most once a second, and keeps the answers while
+the program runs. The environment variable `MAPSTILL_PLACE_SEARCH` names another
+Nominatim server (the address of its `/search`), or switches the search `off`.
+
 ## Credit
 
 Maps made with this must credit their sources when published:
@@ -133,8 +161,14 @@ frontend/src/
                              export, the live map
   ui/                        the sidebar and the style editor
 packaging/                 PyInstaller recipe and build script
+docs/screenshots/          images for this README
 tests/                     Python tests (frontend tests are next to the code)
 ```
 
 Checks: `uv run pytest`, `uv run ruff check .`, `uv run mypy`; in `frontend`:
 `npm run check`.
+
+## Licence
+
+MIT, see [LICENSE](LICENSE). The libraries it is built on are named, with their
+licences, in `THIRD-PARTY-NOTICES.txt` next to the built program.
