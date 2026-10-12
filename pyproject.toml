@@ -1,8 +1,10 @@
 [project]
 name = "mapstill"
-version = "0.1.0"
+version = "1.0.0"
 description = "Renders styled maps of any area as large images, for use in media projects"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",
